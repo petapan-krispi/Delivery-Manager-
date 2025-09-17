@@ -1,0 +1,29 @@
+
+🎉 DELIVERY MANAGER WEB APP READY!
+
+📁 Package created: DeliveryManager_Web/
+
+🚀 TO START THE APPLICATION:
+
+Option 1 - Easy (Recommended):
+- Windows: Double-click run_windows.bat
+- Mac: Double-click run_mac.sh or run: ./run_mac.sh
+- Linux: Run: ./run_linux.sh
+
+Option 2 - Python launcher:
+- Run: python launch.py
+
+Option 3 - Manual:
+- Install: pip install -r requirements_web.txt
+- Run: streamlit run app.py
+
+🌐 The app will open at: http://localhost:8501
+
+📋 FEATURES:
+- Add/Edit/Delete customers
+- Search and filter
+- Print delivery labels (PDF)
+- Export to Excel
+- Cross-platform (Windows/Mac/Linux)
+
+📞 Support: Contact your developer if you need help!
