@@ -28,24 +28,52 @@ class MainController:
         if not self.filtered_customers:
             self.filtered_customers = self.customers.copy()
     
+    def _sort_customers_alphabetically(self, customers: List[Customer]) -> List[Customer]:
+        """Sort customers alphabetically by customer name (case-insensitive)."""
+        return sorted(customers, key=lambda c: c.customer_name.lower())
+    
     def load_customers(self) -> List[Customer]:
-        """Load customers from Excel file."""
+        """Load customers from Excel file and sort alphabetically."""
         try:
             self.customers = self.excel_manager.load_customers()
-            self.filtered_customers = self.customers.copy()
-            print(f"DEBUG: Loaded {len(self.customers)} customers, filtered: {len(self.filtered_customers)}")
+            # Sort alphabetically for display
+            self.filtered_customers = self._sort_customers_alphabetically(self.customers.copy())
+            print(f"DEBUG: Loaded {len(self.customers)} customers, sorted: {len(self.filtered_customers)}")
             return self.customers
         except Exception as e:
             print(f"Error loading customers: {str(e)}")
             return []
     
     def search_customers(self, query: str) -> List[Customer]:
-        """Search customers by name, phone, suburb, or postal code."""
+        """Search customers by name, phone, suburb, or postal code with exact matches first."""
         try:
             if not query.strip():
-                self.filtered_customers = self.customers.copy()
+                self.filtered_customers = self._sort_customers_alphabetically(self.customers.copy())
             else:
-                self.filtered_customers = self.excel_manager.search_customers(query)
+                query_lower = query.lower().strip()
+                exact_matches = []
+                partial_matches = []
+                
+                for customer in self.customers:
+                    name_lower = customer.customer_name.lower()
+                    
+                    # Check for exact match at start of name
+                    if name_lower.startswith(query_lower):
+                        exact_matches.append(customer)
+                    # Check for partial match anywhere in name, phone, suburb, or postal code
+                    elif (query_lower in name_lower or
+                          query_lower in customer.phone.lower() or
+                          query_lower in customer.suburb.lower() or
+                          query_lower in customer.postal_code.lower()):
+                        partial_matches.append(customer)
+                
+                # Sort both lists alphabetically
+                exact_matches = self._sort_customers_alphabetically(exact_matches)
+                partial_matches = self._sort_customers_alphabetically(partial_matches)
+                
+                # Combine: exact matches first, then partial matches
+                self.filtered_customers = exact_matches + partial_matches
+            
             return self.filtered_customers
         except Exception as e:
             print(f"Error searching customers: {str(e)}")
@@ -57,7 +85,8 @@ class MainController:
             success = self.excel_manager.add_customer(customer)
             if success:
                 self.customers.append(customer)
-                self.filtered_customers.append(customer)
+                # Keep filtered list sorted alphabetically
+                self.filtered_customers = self._sort_customers_alphabetically(self.customers.copy())
             return success
         except Exception as e:
             print(f"Error adding customer: {str(e)}")
@@ -82,6 +111,9 @@ class MainController:
                         existing_customer.address == old_customer.address):
                         self.filtered_customers[i] = new_customer
                         break
+                
+                # Re-sort after update
+                self.filtered_customers = self._sort_customers_alphabetically(self.filtered_customers)
             return success
         except Exception as e:
             print(f"Error updating customer: {str(e)}")

@@ -53,7 +53,7 @@ class DeliverySlipPrinter:
         )
     
     def create_delivery_slip_pdf(self, customer: Customer) -> bytes:
-        """Create a PDF delivery slip for a customer."""
+        """Create a PDF delivery slip for a customer (SCH DEL removed)."""
         buffer = io.BytesIO()
         doc = SimpleDocTemplate(buffer, pagesize=letter)
         story = []
@@ -70,16 +70,13 @@ class DeliverySlipPrinter:
         # Customer Information Section
         story.append(Paragraph("CUSTOMER INFORMATION", self.section_style))
         
-        # Customer details table
+        # Customer details table (SCH DEL removed)
         customer_data = [
             ['Name:', customer.customer_name],
             ['Phone:', customer.phone],
             ['Address:', f"{customer.address}{', Apt ' + customer.apartment_no if customer.apartment_no and customer.apartment_no.strip() else ''}"],
             ['Location:', f"{customer.suburb}{' | Postal Code: ' + customer.postal_code if customer.postal_code and customer.postal_code.strip() else ''}"]
         ]
-        
-        if customer.scheduled_delivery_time and customer.scheduled_delivery_time.strip():
-            customer_data.append(['Scheduled Delivery:', customer.scheduled_delivery_time])
         
         customer_table = Table(customer_data, colWidths=[2*inch, 4*inch])
         customer_table.setStyle(TableStyle([
@@ -111,7 +108,7 @@ class DeliverySlipPrinter:
         return buffer.getvalue()
     
     def create_customer_table_pdf(self, customers: list, search_query: str = "") -> bytes:
-        """Create a PDF with customer table."""
+        """Create a PDF with customer table (SCH DEL removed)."""
         buffer = io.BytesIO()
         doc = SimpleDocTemplate(buffer, pagesize=letter)
         story = []
@@ -131,8 +128,8 @@ class DeliverySlipPrinter:
         
         # Customer table
         if customers:
-            # Table headers
-            headers = ['#', 'Phone', 'Customer Name', 'Scheduled Delivery', 'Apt No', 'Address', 'Suburb', 'Postal Code']
+            # Table headers (SCH DEL removed)
+            headers = ['#', 'Phone', 'Customer Name', 'Apt No', 'Address', 'Suburb', 'Postal Code']
             
             # Table data
             table_data = [headers]
@@ -141,7 +138,6 @@ class DeliverySlipPrinter:
                     str(i),
                     customer.phone,
                     customer.customer_name,
-                    customer.scheduled_delivery_time or '',
                     customer.apartment_no or '',
                     customer.address,
                     customer.suburb,
@@ -150,7 +146,7 @@ class DeliverySlipPrinter:
                 table_data.append(row)
             
             # Create table
-            customer_table = Table(table_data, colWidths=[0.5*inch, 1*inch, 1.5*inch, 1*inch, 0.7*inch, 2*inch, 1*inch, 0.8*inch])
+            customer_table = Table(table_data, colWidths=[0.5*inch, 1.2*inch, 2*inch, 0.8*inch, 2.5*inch, 1.2*inch, 0.8*inch])
             customer_table.setStyle(TableStyle([
                 # Header row
                 ('BACKGROUND', (0, 0), (-1, 0), colors.darkblue),
@@ -194,7 +190,7 @@ class DeliverySlipPrinter:
         return f"customer_table{query_part}_{timestamp}.pdf"
     
     def create_batch_delivery_slip_pdf(self, customers: List[Customer]) -> bytes:
-        """Create a PDF with delivery slips for multiple customers."""
+        """Create a PDF with delivery slips for multiple customers (SCH DEL removed)."""
         try:
             buffer = io.BytesIO()
             doc = SimpleDocTemplate(buffer, pagesize=A4, topMargin=0.5*inch)
@@ -210,21 +206,21 @@ class DeliverySlipPrinter:
             story.append(timestamp)
             story.append(Spacer(1, 20))
             
-            # Create table data
-            table_data = [['Phone', 'Customer Name', 'Delivery Time', 'Address', 'Suburb', 'Postal Code']]
+            # Create table data (SCH DEL removed)
+            table_data = [['Phone', 'Customer Name', 'Apt No', 'Address', 'Suburb', 'Postal Code']]
             
             for customer in customers:
                 table_data.append([
                     customer.phone,
                     customer.customer_name,
-                    customer.scheduled_delivery_time,
+                    customer.apartment_no or '',
                     customer.address,
                     customer.suburb,
                     customer.postal_code
                 ])
             
             # Create table
-            table = Table(table_data, colWidths=[1*inch, 1.5*inch, 1*inch, 2*inch, 1*inch, 0.8*inch])
+            table = Table(table_data, colWidths=[1.2*inch, 1.8*inch, 0.7*inch, 2.2*inch, 1.2*inch, 0.9*inch])
             table.setStyle(TableStyle([
                 ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
                 ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),

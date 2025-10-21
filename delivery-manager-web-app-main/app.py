@@ -42,14 +42,14 @@ def main():
     st.markdown("---")
     
     # Search functionality - moved to top
-    search_term = st.text_input("Search customers:", value=st.session_state.search_term)
+    search_term = st.text_input("Search customers (type first 3 letters):", value=st.session_state.search_term)
         
     # Add Customer Button - under search
     if st.button("➕ Add New Customer", type="primary"):
         st.session_state.show_add_form = True
         st.rerun()
     
-    # Add customer form
+    # Add customer form (SCH DEL removed from UI but kept in backend)
     if st.session_state.show_add_form:
         st.header("➕ Add New Customer")
         
@@ -58,9 +58,8 @@ def main():
             with col1:
                 phone = st.text_input("Phone Number *", placeholder="+1234567890")
                 customer_name = st.text_input("Customer Name *", placeholder="John Doe")
-                scheduled_delivery_time = st.text_input("Delivery Time", placeholder="10:00 AM")
-            with col2:
                 apartment_no = st.text_input("Apartment No", placeholder="Apt 101")
+            with col2:
                 address = st.text_input("Address *", placeholder="123 Main St")
                 suburb = st.text_input("Suburb", placeholder="Downtown")
                 postal_code = st.text_input("Postal Code", placeholder="12345")
@@ -73,7 +72,7 @@ def main():
                             new_customer = Customer(
                                 phone=phone.strip(),
                                 customer_name=customer_name.strip(),
-                                scheduled_delivery_time=scheduled_delivery_time.strip(),
+                                scheduled_delivery_time="",  # Keep empty in backend
                                 apartment_no=apartment_no.strip(),
                                 address=address.strip(),
                                 suburb=suburb.strip(),
@@ -109,21 +108,20 @@ def main():
     st.write(f"**Found {len(customers)} customers**")
     
     if customers:
-        # Create DataFrame for display
+        # Create DataFrame for display (SCH DEL removed)
         customer_data = []
         for customer in customers:
             customer_data.append({
                 'PHONE': customer.phone,
                 'CUSTOMER NAME': customer.customer_name,
-                'SCH   \nDEL': customer.scheduled_delivery_time,
-                'APT\nNO': customer.apartment_no,
+                'APT NO': customer.apartment_no,
                 'ADDRESS': customer.address,
                 'SUBURB': customer.suburb,
                 'PC': customer.postal_code
             })
         
         df = pd.DataFrame(customer_data)
-        st.table(df)
+        st.dataframe(df, use_container_width=True)
         
         # Customer actions
         st.markdown("---")
@@ -184,14 +182,13 @@ def main():
                     # Create a combined table view
                     st.write("### 📄 Selected Customers Report")
                     
-                    # Create table data for selected customers
+                    # Create table data for selected customers (SCH DEL removed)
                     selected_data = []
                     for customer in st.session_state.selected_customers:
                         selected_data.append({
                             'PHONE': customer.phone,
                             'CUSTOMER NAME': customer.customer_name,
-                            'SCH   \nDEL': customer.scheduled_delivery_time,
-                            'APT\nNO': customer.apartment_no,
+                            'APT NO': customer.apartment_no,
                             'ADDRESS': customer.address,
                             'SUBURB': customer.suburb,
                             'PC': customer.postal_code
@@ -288,7 +285,7 @@ def main():
                         use_container_width=True
                     )
     
-    # Edit customer form - appears right under the action buttons
+    # Edit customer form (SCH DEL removed from UI but kept in backend)
     if st.session_state.show_edit_form and st.session_state.selected_customer:
         st.markdown("---")
         st.header("✏️ Edit Customer")
@@ -299,9 +296,8 @@ def main():
             with col1:
                 phone = st.text_input("Phone Number *", value=customer.phone)
                 customer_name = st.text_input("Customer Name *", value=customer.customer_name)
-                scheduled_delivery_time = st.text_input("Delivery Time", value=customer.scheduled_delivery_time)
-            with col2:
                 apartment_no = st.text_input("Apartment No", value=customer.apartment_no)
+            with col2:
                 address = st.text_input("Address *", value=customer.address)
                 suburb = st.text_input("Suburb", value=customer.suburb)
                 postal_code = st.text_input("Postal Code", value=customer.postal_code)
@@ -314,7 +310,7 @@ def main():
                             updated_customer = Customer(
                                 phone=phone.strip(),
                                 customer_name=customer_name.strip(),
-                                scheduled_delivery_time=scheduled_delivery_time.strip(),
+                                scheduled_delivery_time=customer.scheduled_delivery_time,  # Keep existing value
                                 apartment_no=apartment_no.strip(),
                                 address=address.strip(),
                                 suburb=suburb.strip(),
