@@ -31,8 +31,6 @@ def main():
         st.session_state.show_edit_form = False
     if 'selected_customer' not in st.session_state:
         st.session_state.selected_customer = None
-    if 'search_term' not in st.session_state:
-        st.session_state.search_term = ""
     if 'selected_customers' not in st.session_state:
         st.session_state.selected_customers = []
     
@@ -41,8 +39,16 @@ def main():
     # Header
     st.markdown("---")
     
-    # Search functionality - moved to top
-    search_term = st.text_input("Search customers (type first 3 letters):", value=st.session_state.search_term)
+    # LIVE SEARCH - updates automatically as you type (no Enter needed)
+    search_term = st.text_input(
+        "🔍 Search customers (live filtering):", 
+        value="",
+        key="live_search",
+        placeholder="Type to search instantly..."
+    )
+    
+    # Search happens automatically on every keystroke
+    controller.search_customers(search_term)
         
     # Add Customer Button - under search
     if st.button("➕ Add New Customer", type="primary"):
@@ -94,12 +100,6 @@ def main():
                     st.session_state.show_add_form = False
                     st.rerun()
     
-    if search_term != st.session_state.search_term:
-        st.session_state.search_term = search_term
-        controller.search_customers(search_term)
-    else:
-        controller.search_customers(search_term)
-    
     # Load and display customers
     st.markdown("---")
     st.header("📋 Customer List")
@@ -121,7 +121,7 @@ def main():
             })
         
         df = pd.DataFrame(customer_data)
-        st.dataframe(df, use_container_width=True)
+        st.dataframe(df, use_container_width=True, hide_index=True)
         
         # Customer actions
         st.markdown("---")
