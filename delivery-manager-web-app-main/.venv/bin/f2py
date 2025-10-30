@@ -1,0 +1,7 @@
+#!/Users/kithmalgunathillake/Desktop/Delivery-Manager-/delivery-manager-web-app-main/.venv/bin/python
+import sys
+from numpy.f2py.f2py2e import main
+if __name__ == '__main__':
+    if sys.argv[0].endswith('.exe'):
+        sys.argv[0] = sys.argv[0][:-4]
+    sys.exit(main())
